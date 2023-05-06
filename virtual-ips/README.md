@@ -115,6 +115,6 @@ Ensure that your firewall is not configured with address 192.0.2.1/24 -- conside
 10. Click save. Then click apply if prompted.
 
 
-**Repeat these steps on the second firewall.**
+**Repeat these steps on the second firewall.**  Be sure to enter the exact same values used on the first firewall.
 
 You will likely need to further configure the firewall with allow rules as required on the VIP.
