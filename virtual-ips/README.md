@@ -84,3 +84,37 @@ You can verify this by viewing the logs and the showing IP addresses on both ser
     sudo journalctl -u keepalived
 
     ip addr show eth0
+
+### BSD based firewalls (opnsense et al)
+
+On many BSD based firewalls with a webgui such as opnsense, CARP addresses are used for redundant addresses.
+
+These can be used to provide redundant:
+
+* Port forwards
+* Gateways
+* VPN servers
+* whatever else your firewall provides
+
+These firewalls can additionally be synced in an HA configuration so that rules flow from the primary to the secondary firewall and state tables are shared.
+
+To set up a Virtual IP in opnsense 23.x:
+
+**On the first firewall**
+
+1. Nagivate to Interfaces -> Virtual IPs -> Settings.
+2. Click the plus [+] to add a new virtual IP.
+3. Select mode "CARP".
+4. Select the interface that this VIP will be configured on.
+5. Enter the Virtual IP and its subnet under Network / Address. eg 192.0.2.1/24  
+Ensure that your firewall is not configured with address 192.0.2.1/24 -- consider addressing your first firewall as 192.0.2.2/24 and your second firewall as 192.0.2.3/24 leaving 192.0.2.1/24 for a highly available VIP as the gateway.
+6. If you do not want the services presented by the firewall (eg openvpn, DNS forwarding, HTTP[S] server) select Deny service binding. This will still permit the IP to be used as a gateway or for port forwards if checked.
+7. Enter a secure password for the Password.
+8. Select a positive integer that you have not used for a virtual network ID elsewhere.
+9. Enter a useful description about what the VIP is for.
+10. Click save. Then click apply if prompted.
+
+
+**Repeat these steps on the second firewall.**
+
+You will likely need to further configure the firewall with allow rules as required on the VIP.
